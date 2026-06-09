@@ -25,16 +25,93 @@ let currentIndex = 0;
 let isFlipped = false;
 const STORAGE_KEY = 'vocabDeckApp';
 
+const DEFAULT_WORDS = [
+  {
+    word: 'abandon',
+    translation: '放棄',
+    partOfSpeech: 'verb',
+    example: 'She had to abandon her car when it broke down.',
+    rootAnalysis: 'ab- (離開) + bandon (控制) = 放棄',
+  },
+  {
+    word: 'beneficial',
+    translation: '有益的',
+    partOfSpeech: 'adjective',
+    example: 'Regular exercise is beneficial to your health.',
+    rootAnalysis: 'bene- (好) + fic (做) + -ial = 有益的',
+  },
+  {
+    word: 'curious',
+    translation: '好奇的',
+    partOfSpeech: 'adjective',
+    example: 'The child was curious about the strange sound.',
+    rootAnalysis: 'curi- (關心) + -ous = 好奇的',
+  },
+  {
+    word: 'dedicate',
+    translation: '奉獻；致力於',
+    partOfSpeech: 'verb',
+    example: 'He decided to dedicate more time to studying.',
+    rootAnalysis: 'de- (向下) + dicare (宣告) = 奉獻',
+  },
+  {
+    word: 'evidence',
+    translation: '證據',
+    partOfSpeech: 'noun',
+    example: 'The detective found strong evidence at the scene.',
+    rootAnalysis: 'e- (出) + vid (看) + -ence = 證據',
+  },
+  {
+    word: 'fortunate',
+    translation: '幸運的',
+    partOfSpeech: 'adjective',
+    example: 'She felt fortunate to have such caring friends.',
+    rootAnalysis: 'fort- (力量、運氣) + -unate = 幸運的',
+  },
+  {
+    word: 'generous',
+    translation: '大方的',
+    partOfSpeech: 'adjective',
+    example: 'He is generous with his time and support.',
+    rootAnalysis: 'gener- (出生、產生) + -ous = 慷慨的',
+  },
+  {
+    word: 'honest',
+    translation: '誠實的',
+    partOfSpeech: 'adjective',
+    example: 'An honest answer is always the best answer.',
+    rootAnalysis: 'honest- (誠實) = 誠實的',
+  },
+  {
+    word: 'improve',
+    translation: '改善',
+    partOfSpeech: 'verb',
+    example: 'Practice every day to improve your skills.',
+    rootAnalysis: 'im- (使) + prove (證明、改進) = 改善',
+  },
+  {
+    word: 'journey',
+    translation: '旅程',
+    partOfSpeech: 'noun',
+    example: 'Their journey across the mountains took three days.',
+    rootAnalysis: 'journ- (日) + -ey = 旅程',
+  },
+];
+
 function loadWords() {
   const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return [];
+  if (!raw) {
+    saveWords(DEFAULT_WORDS);
+    return DEFAULT_WORDS;
+  }
 
   try {
     return JSON.parse(raw);
   } catch (error) {
     console.warn('儲存資料無效，已重置 localStorage。', error);
     localStorage.removeItem(STORAGE_KEY);
-    return [];
+    saveWords(DEFAULT_WORDS);
+    return DEFAULT_WORDS;
   }
 }
 
