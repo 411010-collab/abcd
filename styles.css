@@ -1,0 +1,278 @@
+:root {
+  --bg: #f5f7fb;
+  --card: #ffffff;
+  --primary: #3b82f6;
+  --primary-dark: #2563eb;
+  --text: #111827;
+  --muted: #6b7280;
+  --shadow: 0 18px 40px rgba(15, 23, 42, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Noto Sans TC", "Segoe UI", sans-serif;
+  background: linear-gradient(180deg, #e8eff7 0%, #f7f9fd 100%);
+  color: var(--text);
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.6rem, 2.2vw, 2.4rem);
+}
+
+nav {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-button {
+  border: none;
+  background: #ffffff;
+  color: var(--text);
+  padding: 10px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.nav-button.active,
+.nav-button:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-1px);
+}
+
+main {
+  margin-top: 24px;
+  display: grid;
+  gap: 32px;
+}
+
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+}
+
+.card-container {
+  display: flex;
+  justify-content: center;
+}
+
+.card {
+  width: min(420px, 100%);
+  aspect-ratio: 3 / 4;
+  perspective: 1400px;
+  cursor: pointer;
+}
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  background: var(--card);
+  border-radius: 26px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-shadow: var(--shadow);
+  backface-visibility: hidden;
+  transition: transform 0.7s ease;
+}
+
+.card-front {
+  transform: rotateY(0deg);
+}
+
+.card-back {
+  transform: rotateY(180deg);
+}
+
+.card.flipped .card-front {
+  transform: rotateY(-180deg);
+}
+
+.card.flipped .card-back {
+  transform: rotateY(0deg);
+}
+
+.card-text {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-top: 12px;
+}
+
+.label {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.card-back-row {
+  width: 100%;
+  margin-top: 16px;
+  text-align: left;
+  line-height: 1.6;
+}
+
+.flashcard-actions,
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  border: none;
+  background: var(--primary);
+  color: white;
+  padding: 12px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  background: var(--primary-dark);
+}
+
+button[type="button"] {
+  background: #334155;
+}
+
+button[type="button"]:hover {
+  background: #1e293b;
+}
+
+.hint {
+  margin-top: 16px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.manage-form {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+}
+
+.form-row {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+label {
+  font-weight: 600;
+}
+
+input,
+textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 14px;
+  padding: 12px 14px;
+  resize: vertical;
+  min-height: 44px;
+}
+
+input:focus,
+textarea:focus {
+  outline: 3px solid rgba(59, 130, 246, 0.22);
+  border-color: #93c5fd;
+}
+
+.list-section {
+  margin-top: 32px;
+  padding: 0 12px;
+}
+
+.word-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.word-item {
+  background: white;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 9px 25px rgba(15, 23, 42, 0.08);
+}
+
+.word-item h3 {
+  margin: 0 0 10px;
+}
+
+.word-item p {
+  margin: 6px 0;
+  color: #334155;
+}
+
+.word-item small {
+  color: #64748b;
+}
+
+.word-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.word-actions button {
+  background: #ef4444;
+  padding: 10px 14px;
+}
+
+.word-actions button:hover {
+  background: #b91c1c;
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    padding: 16px;
+  }
+
+  .manage-form {
+    padding: 18px;
+  }
+}
