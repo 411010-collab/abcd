@@ -247,24 +247,48 @@ async function autoFillWord() {
 }
 
 async function fetchDictionaryEntry(word) {
-  const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
-  if (!response.ok) {
+  try {
+    const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+    const firstEntry = Array.isArray(data) && data[0];
+    if (!firstEntry) return null;
+
+    const meanings = firstEntry.meanings || [];
+    const firstMeaning = meanings[0];
+    const definitions = firstMeaning?.definitions || [];
+    const firstDefinition = definitions[0];
+
+    // 嘗試從第一個定義取得例句，如果沒有就尋找其他定義中的例句
+    let example = firstDefinition?.example || '';
+    if (!example) {
+      for (let def of definitions) {
+        if (def.example) {
+          example = def.example;
+          break;
+        }
+      }
+    }
+
+    // 清理例句中的格式標籤 (如 " 或其他符號)
+    example = example.replace(/"/g, '"').replace(/"/g, '"').trim();
+
+    // 取得詞根/來源資訊
+    const origin = firstEntry.origin || '';
+
+    return {
+      partOfSpeech: firstMeaning?.partOfSpeech || '',
+      example: example,
+      root: origin,
+      translation: firstDefinition?.definition || '',
+    };
+  } catch (error) {
+    console.error('Dictionary API 錯誤:', error);
     return null;
   }
-
-  const data = await response.json();
-  const firstEntry = Array.isArray(data) && data[0];
-  if (!firstEntry) return null;
-
-  const meaning = firstEntry.meanings && firstEntry.meanings[0];
-  const definition = meaning?.definitions?.[0];
-
-  return {
-    partOfSpeech: meaning?.partOfSpeech || '',
-    example: definition?.example || '',
-    root: firstEntry.origin || '',
-    translation: definition?.definition || '',
-  };
 }
 
 async function fetchTranslation(word) {
