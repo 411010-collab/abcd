@@ -126,21 +126,21 @@ function getCurrentWords() {
 function renderWordList() {
   const words = getCurrentWords();
   if (words.length === 0) {
-    wordList.innerHTML = '<li class="word-item"><p>目前尚未新增任何單字。</p></li>';
+    wordList.innerHTML = '<li class="bg-dark-card border border-dark-text-secondary/20 rounded-3xl p-4.5 shadow-dark-md"><p class="text-dark-text-secondary">目前尚未新增任何單字。</p></li>';
     return;
   }
 
   wordList.innerHTML = words
     .map((entry, index) => {
       return `
-        <li class="word-item">
-          <h3>${escapeHtml(entry.word)}</h3>
-          <p><strong>翻譯：</strong>${escapeHtml(entry.translation)}</p>
-          <p><strong>詞性：</strong>${escapeHtml(entry.partOfSpeech)}</p>
-          <p><strong>例句：</strong>${escapeHtml(entry.example)}</p>
-          <p><strong>字根分析：</strong>${escapeHtml(entry.rootAnalysis)}</p>
-          <div class="word-actions">
-            <button type="button" data-index="${index}" class="delete-word">刪除</button>
+        <li class="bg-dark-card border border-dark-text-secondary/20 rounded-3xl p-4.5 shadow-dark-md hover:shadow-dark-lg transition-shadow duration-200">
+          <h3 class="m-0 mb-2.5 text-dark-text-primary font-bold text-lg">${escapeHtml(entry.word)}</h3>
+          <p class="my-1.5 text-dark-text-secondary"><strong class="text-accent-cyan">翻譯：</strong>${escapeHtml(entry.translation)}</p>
+          <p class="my-1.5 text-dark-text-secondary"><strong class="text-accent-cyan">詞性：</strong>${escapeHtml(entry.partOfSpeech)}</p>
+          <p class="my-1.5 text-dark-text-secondary"><strong class="text-accent-cyan">例句：</strong>${escapeHtml(entry.example)}</p>
+          <p class="my-1.5 text-dark-text-secondary"><strong class="text-accent-cyan">字根分析：</strong>${escapeHtml(entry.rootAnalysis)}</p>
+          <div class="flex gap-2.5 flex-wrap mt-3">
+            <button type="button" data-index="${index}" class="delete-word px-3 py-2 bg-accent-pink text-dark-bg rounded-xl font-semibold text-sm shadow-glow-blue transition-all duration-150 hover:-translate-y-0.5 active:scale-95">刪除</button>
           </div>
         </li>
       `;
@@ -192,10 +192,23 @@ function refreshFlashcard() {
 }
 
 function changeView(showFlashcards) {
-  flashcardView.classList.toggle('active', showFlashcards);
-  manageView.classList.toggle('active', !showFlashcards);
-  viewFlashcards.classList.toggle('active', showFlashcards);
-  viewManage.classList.toggle('active', !showFlashcards);
+  flashcardView.classList.toggle('hidden', !showFlashcards);
+  flashcardView.classList.toggle('block', showFlashcards);
+  manageView.classList.toggle('hidden', showFlashcards);
+  manageView.classList.toggle('block', !showFlashcards);
+  
+  // 更新導航按鈕的視覺狀態
+  if (showFlashcards) {
+    viewFlashcards.classList.add('border-accent-blue/30', 'text-accent-blue');
+    viewFlashcards.classList.remove('border-dark-text-secondary/20', 'text-dark-text-secondary');
+    viewManage.classList.remove('border-accent-blue/30', 'text-accent-blue');
+    viewManage.classList.add('border-dark-text-secondary/20', 'text-dark-text-secondary');
+  } else {
+    viewManage.classList.add('border-accent-blue/30', 'text-accent-blue');
+    viewManage.classList.remove('border-dark-text-secondary/20', 'text-dark-text-secondary');
+    viewFlashcards.classList.remove('border-accent-blue/30', 'text-accent-blue');
+    viewFlashcards.classList.add('border-dark-text-secondary/20', 'text-dark-text-secondary');
+  }
 }
 
 function setLoadingState(enabled) {
@@ -318,7 +331,16 @@ function shuffleWords() {
 
 flashcard.addEventListener('click', () => {
   isFlipped = !isFlipped;
-  flashcard.classList.toggle('flipped', isFlipped);
+  const cardFront = document.getElementById('cardFront');
+  const cardBack = document.getElementById('cardBack');
+  
+  if (isFlipped) {
+    cardFront.style.transform = 'rotateY(-180deg)';
+    cardBack.style.transform = 'rotateY(0deg)';
+  } else {
+    cardFront.style.transform = 'rotateY(0deg)';
+    cardBack.style.transform = 'rotateY(180deg)';
+  }
 });
 
 viewFlashcards.addEventListener('click', () => changeView(true));

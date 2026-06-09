@@ -4,79 +4,113 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>背單字卡片</title>
-  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'dark-bg': '#0d1117',
+            'dark-bg-secondary': '#161b22',
+            'dark-card': '#1c2128',
+            'dark-card-hover': '#262c36',
+            'accent-blue': '#58a6ff',
+            'accent-purple': '#a371f7',
+            'accent-pink': '#ff7b72',
+            'accent-cyan': '#79c0ff',
+            'dark-text-primary': '#e6edf3',
+            'dark-text-secondary': '#8b949e',
+            'dark-text-muted': '#6e7681',
+          },
+          backgroundImage: {
+            'dark-gradient': 'linear-gradient(180deg, #0d1117 0%, #161b22 100%)',
+            'dark-card-gradient': 'linear-gradient(135deg, #1c2128 0%, #262c36 100%)',
+          },
+          boxShadow: {
+            'glow-blue': '0 0 20px rgba(88, 166, 255, 0.15), 0 8px 16px rgba(0, 0, 0, 0.3)',
+            'glow-purple': '0 0 20px rgba(163, 113, 247, 0.15), 0 8px 16px rgba(0, 0, 0, 0.3)',
+            'dark-md': '0 4px 12px rgba(0, 0, 0, 0.3)',
+            'dark-lg': '0 8px 24px rgba(0, 0, 0, 0.4)',
+          },
+        }
+      }
+    }
+  </script>
 </head>
-<body>
-  <div class="app-shell">
-    <header>
-      <h1>背單字軟體</h1>
-      <nav>
-        <button id="viewFlashcards" class="nav-button active">單字卡片</button>
-        <button id="viewManage" class="nav-button">管理單字</button>
+<body class="bg-dark-gradient text-dark-text-primary font-sans antialiased">
+  <div class="min-h-screen flex flex-col p-6">
+    <header class="flex flex-row items-center justify-between gap-4 flex-wrap">
+      <h1 class="m-0 text-2xl sm:text-3xl lg:text-4xl font-bold">背單字軟體</h1>
+      <nav class="flex gap-2">
+        <button id="viewFlashcards" class="px-5 py-2.5 bg-dark-card border border-accent-blue/30 text-accent-blue rounded-full cursor-pointer shadow-glow-blue transition-all duration-200 hover:shadow-glow-blue hover:bg-dark-card-hover active:scale-95">單字卡片</button>
+        <button id="viewManage" class="px-5 py-2.5 bg-dark-card border border-dark-text-secondary/20 text-dark-text-secondary rounded-full cursor-pointer shadow-dark-md transition-all duration-200 hover:shadow-dark-md hover:bg-dark-card-hover hover:text-dark-text-primary active:scale-95">管理單字</button>
       </nav>
     </header>
 
-    <main>
-      <section id="flashcardView" class="view active">
-        <div class="card-container">
-          <div class="card" id="flashcard">
-            <div class="card-face card-front" id="cardFront">
-              <p class="label">英文單字</p>
-              <div class="card-text" id="frontText">點擊卡片開始</div>
+    <main class="mt-6 grid gap-8">
+      <section id="flashcardView" class="block">
+        <div class="flex justify-center">
+          <div class="w-full max-w-sm aspect-video perspective cursor-pointer relative overflow-hidden" id="flashcard" style="aspect-ratio: 3/4;">
+            <div class="absolute inset-0 bg-dark-card-gradient border border-accent-blue/20 rounded-3xl p-8 flex flex-col justify-center items-center text-center shadow-glow-blue backface-hidden transition-transform duration-700" style="backface-visibility: hidden; transform: rotateY(0deg);" id="cardFront">
+              <p class="text-dark-text-secondary text-sm">英文單字</p>
+              <div class="text-3xl sm:text-4xl lg:text-5xl font-bold mt-3 tracking-wide" id="frontText">點擊卡片開始</div>
             </div>
-            <div class="card-face card-back" id="cardBack">
-              <div class="card-back-row"><strong>翻譯：</strong><span id="backTranslation">-</span></div>
-              <div class="card-back-row"><strong>詞性：</strong><span id="backPartOfSpeech">-</span></div>
-              <div class="card-back-row"><strong>例句：</strong><span id="backExample">-</span></div>
-              <div class="card-back-row"><strong>字根分析：</strong><span id="backRoot">-</span></div>
+            <div class="absolute inset-0 bg-dark-card-gradient border border-accent-purple/20 rounded-3xl p-8 flex flex-col justify-center items-center shadow-glow-purple backface-hidden transition-transform duration-700" style="backface-visibility: hidden; transform: rotateY(180deg);" id="cardBack">
+              <div class="w-full text-left leading-relaxed mt-4"><strong class="text-accent-cyan">翻譯：</strong><span class="text-dark-text-secondary" id="backTranslation">-</span></div>
+              <div class="w-full text-left leading-relaxed mt-4"><strong class="text-accent-cyan">詞性：</strong><span class="text-dark-text-secondary" id="backPartOfSpeech">-</span></div>
+              <div class="w-full text-left leading-relaxed mt-4"><strong class="text-accent-cyan">例句：</strong><span class="text-dark-text-secondary" id="backExample">-</span></div>
+              <div class="w-full text-left leading-relaxed mt-4"><strong class="text-accent-cyan">字根分析：</strong><span class="text-dark-text-secondary" id="backRoot">-</span></div>
             </div>
           </div>
         </div>
-        <div class="flashcard-actions">
-          <button id="prevWord">上一則</button>
-          <button id="nextWord">下一則</button>
-          <button id="shuffleWords">隨機</button>
+        <div class="flex gap-3 justify-center flex-wrap mt-6">
+          <button id="prevWord" class="px-4 py-3 bg-accent-blue text-dark-bg rounded-full cursor-pointer shadow-glow-blue transition-all duration-150 hover:-translate-y-0.5 hover:shadow-glow-blue font-semibold active:scale-95">上一則</button>
+          <button id="nextWord" class="px-4 py-3 bg-accent-blue text-dark-bg rounded-full cursor-pointer shadow-glow-blue transition-all duration-150 hover:-translate-y-0.5 hover:shadow-glow-blue font-semibold active:scale-95">下一則</button>
+          <button id="shuffleWords" class="px-4 py-3 bg-accent-purple text-dark-bg rounded-full cursor-pointer shadow-glow-purple transition-all duration-150 hover:-translate-y-0.5 hover:shadow-glow-purple font-semibold active:scale-95">隨機</button>
         </div>
-        <div class="hint">提示：點擊卡片翻面。若無單字，請切換到管理頁面新增。</div>
+        <div class="mt-4 text-center text-dark-text-muted text-sm">提示：點擊卡片翻面。若無單字，請切換到管理頁面新增。</div>
       </section>
 
-      <section id="manageView" class="view">
-        <form id="wordForm" class="manage-form">
-          <div class="form-row">
-            <label for="wordInput">英文單字</label>
-            <input id="wordInput" type="text" placeholder="輸入英文單字" required />
-            <button type="button" id="autoFillButton">自動填入</button>
+      <section id="manageView" class="hidden">
+        <form id="wordForm" class="max-w-3xl mx-auto p-6 bg-dark-card-gradient border border-accent-blue/20 rounded-3xl shadow-glow-blue">
+          <div class="grid gap-2 mb-5">
+            <label for="wordInput" class="font-semibold text-dark-text-primary">英文單字</label>
+            <div class="flex gap-2">
+              <input id="wordInput" type="text" placeholder="輸入英文單字" required class="flex-1 bg-dark-bg border border-dark-text-secondary/30 rounded-2xl px-3.5 py-3 text-dark-text-primary placeholder-dark-text-muted focus:outline-none focus:border-accent-blue/50 focus:ring-2 focus:ring-accent-blue/20 transition-all duration-200" />
+              <button type="button" id="autoFillButton" class="px-4 py-3 bg-accent-cyan text-dark-bg rounded-2xl font-semibold shadow-glow-blue transition-all duration-150 hover:-translate-y-0.5 hover:shadow-glow-blue active:scale-95">自動填入</button>
+            </div>
           </div>
 
-          <div class="form-row">
-            <label for="translationInput">翻譯</label>
-            <textarea id="translationInput" rows="2" placeholder="翻譯"></textarea>
+          <div class="grid gap-2 mb-5">
+            <label for="translationInput" class="font-semibold text-dark-text-primary">翻譯</label>
+            <textarea id="translationInput" rows="2" placeholder="翻譯" class="w-full bg-dark-bg border border-dark-text-secondary/30 rounded-2xl px-3.5 py-3 text-dark-text-primary placeholder-dark-text-muted focus:outline-none focus:border-accent-blue/50 focus:ring-2 focus:ring-accent-blue/20 transition-all duration-200 resize-vertical"></textarea>
           </div>
 
-          <div class="form-row">
-            <label for="partOfSpeechInput">詞性</label>
-            <input id="partOfSpeechInput" type="text" placeholder="詞性" />
+          <div class="grid gap-2 mb-5">
+            <label for="partOfSpeechInput" class="font-semibold text-dark-text-primary">詞性</label>
+            <input id="partOfSpeechInput" type="text" placeholder="詞性" class="w-full bg-dark-bg border border-dark-text-secondary/30 rounded-2xl px-3.5 py-3 text-dark-text-primary placeholder-dark-text-muted focus:outline-none focus:border-accent-blue/50 focus:ring-2 focus:ring-accent-blue/20 transition-all duration-200 min-h-11" />
           </div>
 
-          <div class="form-row">
-            <label for="exampleInput">例句</label>
-            <textarea id="exampleInput" rows="3" placeholder="例句"></textarea>
+          <div class="grid gap-2 mb-5">
+            <label for="exampleInput" class="font-semibold text-dark-text-primary">例句</label>
+            <textarea id="exampleInput" rows="3" placeholder="例句" class="w-full bg-dark-bg border border-dark-text-secondary/30 rounded-2xl px-3.5 py-3 text-dark-text-primary placeholder-dark-text-muted focus:outline-none focus:border-accent-blue/50 focus:ring-2 focus:ring-accent-blue/20 transition-all duration-200 resize-vertical"></textarea>
           </div>
 
-          <div class="form-row">
-            <label for="rootInput">字根分析</label>
-            <textarea id="rootInput" rows="2" placeholder="字根 / 來源 / 分析"></textarea>
+          <div class="grid gap-2 mb-6">
+            <label for="rootInput" class="font-semibold text-dark-text-primary">字根分析</label>
+            <textarea id="rootInput" rows="2" placeholder="字根 / 來源 / 分析" class="w-full bg-dark-bg border border-dark-text-secondary/30 rounded-2xl px-3.5 py-3 text-dark-text-primary placeholder-dark-text-muted focus:outline-none focus:border-accent-blue/50 focus:ring-2 focus:ring-accent-blue/20 transition-all duration-200 resize-vertical"></textarea>
           </div>
 
-          <div class="form-actions">
-            <button type="submit">儲存單字</button>
-            <button type="button" id="clearForm">清除</button>
+          <div class="flex gap-3 justify-center flex-wrap">
+            <button type="submit" class="px-4 py-3 bg-accent-blue text-dark-bg rounded-full font-semibold shadow-glow-blue transition-all duration-150 hover:-translate-y-0.5 hover:shadow-glow-blue active:scale-95">儲存單字</button>
+            <button type="button" id="clearForm" class="px-4 py-3 bg-slate-600 text-dark-text-primary rounded-full font-semibold shadow-dark-md transition-all duration-150 hover:-translate-y-0.5 hover:bg-slate-500 hover:shadow-dark-md active:scale-95">清除</button>
           </div>
         </form>
 
-        <div class="list-section">
-          <h2>已儲存單字</h2>
-          <ul id="wordList" class="word-list"></ul>
+        <div class="mt-8 px-3">
+          <h2 class="text-xl font-bold text-dark-text-primary mb-4">已儲存單字</h2>
+          <ul id="wordList" class="grid gap-3.5">
+          </ul>
         </div>
       </section>
     </main>
