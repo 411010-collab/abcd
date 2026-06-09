@@ -27,7 +27,15 @@ const STORAGE_KEY = 'vocabDeckApp';
 
 function loadWords() {
   const raw = localStorage.getItem(STORAGE_KEY);
-  return raw ? JSON.parse(raw) : [];
+  if (!raw) return [];
+
+  try {
+    return JSON.parse(raw);
+  } catch (error) {
+    console.warn('儲存資料無效，已重置 localStorage。', error);
+    localStorage.removeItem(STORAGE_KEY);
+    return [];
+  }
 }
 
 function saveWords(words) {
