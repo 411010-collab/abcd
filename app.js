@@ -28,9 +28,7 @@ const shuffleWordsBtn = document.getElementById('shuffleWords');
 let currentIndex = 0;
 let isFlipped = false;
 const STORAGE_KEY = 'vocabDeckApp';
-const GOOGLE_APPS_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
-javascript
-   const GOOGLE_APPS_SCRIPT_URL = https://script.google.com/macros/s/AKfycbzLwEfIlqdhOzTbzacKqHsXDBYJKUdI41G2UpSIr10YXYvXekzvVTPQinhYIfxgcWmQMQ/exec;
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLwEfIlqdhOzTbzacKqHsXDBYJKUdI41G2UpSIr10YXYvXekzvVTPQinhYIfxgcWmQMQ/exec';
 const DEFAULT_WORDS = [
   {
     word: 'abandon',
