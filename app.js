@@ -1,11 +1,12 @@
+// ============================================
+// DOM 元素
+// ============================================
 const wordForm = document.getElementById('wordForm');
 const wordInput = document.getElementById('wordInput');
 const translationInput = document.getElementById('translationInput');
 const partOfSpeechInput = document.getElementById('partOfSpeechInput');
 const exampleInput = document.getElementById('exampleInput');
 const rootInput = document.getElementById('rootInput');
-const autoFillButton = document.getElementById('autoFillButton');
-const clearFormButton = document.getElementById('clearForm');
 const wordList = document.getElementById('wordList');
 const viewFlashcards = document.getElementById('viewFlashcards');
 const viewManage = document.getElementById('viewManage');
@@ -21,10 +22,15 @@ const prevWordBtn = document.getElementById('prevWord');
 const nextWordBtn = document.getElementById('nextWord');
 const shuffleWordsBtn = document.getElementById('shuffleWords');
 
+// ============================================
+// 全域變數
+// ============================================
 let currentIndex = 0;
 let isFlipped = false;
 const STORAGE_KEY = 'vocabDeckApp';
-
+const GOOGLE_APPS_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+javascript
+   const GOOGLE_APPS_SCRIPT_URL = https://script.google.com/macros/s/AKfycbzLwEfIlqdhOzTbzacKqHsXDBYJKUdI41G2UpSIr10YXYvXekzvVTPQinhYIfxgcWmQMQ/exec;
 const DEFAULT_WORDS = [
   {
     word: 'abandon',
@@ -211,100 +217,6 @@ function changeView(showFlashcards) {
   }
 }
 
-function setLoadingState(enabled) {
-  autoFillButton.textContent = enabled ? '讀取中...' : '自動填入';
-  autoFillButton.disabled = enabled;
-}
-
-async function autoFillWord() {
-  const word = wordInput.value.trim();
-  if (!word) return;
-
-  setLoadingState(true);
-
-  try {
-    const [dictEntry, translation] = await Promise.all([
-      fetchDictionaryEntry(word),
-      fetchTranslation(word),
-    ]);
-
-    if (dictEntry) {
-      partOfSpeechInput.value = dictEntry.partOfSpeech || '';
-      exampleInput.value = dictEntry.example || '';
-      rootInput.value = dictEntry.root || '';
-      if (!translationInput.value) {
-        translationInput.value = translation || dictEntry.translation || '';
-      }
-    } else if (translation) {
-      translationInput.value = translation;
-    }
-  } catch (error) {
-    console.error(error);
-    alert('自動填入失敗，請稍後再試。');
-  } finally {
-    setLoadingState(false);
-  }
-}
-
-async function fetchDictionaryEntry(word) {
-  try {
-    const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
-    if (!response.ok) {
-      return null;
-    }
-
-    const data = await response.json();
-    const firstEntry = Array.isArray(data) && data[0];
-    if (!firstEntry) return null;
-
-    const meanings = firstEntry.meanings || [];
-    const firstMeaning = meanings[0];
-    const definitions = firstMeaning?.definitions || [];
-    const firstDefinition = definitions[0];
-
-    // 嘗試從第一個定義取得例句，如果沒有就尋找其他定義中的例句
-    let example = firstDefinition?.example || '';
-    if (!example) {
-      for (let def of definitions) {
-        if (def.example) {
-          example = def.example;
-          break;
-        }
-      }
-    }
-
-    // 清理例句中的格式標籤 (如 " 或其他符號)
-    example = example.replace(/"/g, '"').replace(/"/g, '"').trim();
-
-    // 取得詞根/來源資訊
-    const origin = firstEntry.origin || '';
-
-    return {
-      partOfSpeech: firstMeaning?.partOfSpeech || '',
-      example: example,
-      root: origin,
-      translation: firstDefinition?.definition || '',
-    };
-  } catch (error) {
-    console.error('Dictionary API 錯誤:', error);
-    return null;
-  }
-}
-
-async function fetchTranslation(word) {
-  try {
-    const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=en|zh-TW`);
-    const data = await response.json();
-    return data.responseData?.translatedText || '';
-  } catch (e) {
-    return '';
-  }
-}
-
-function clearForm() {
-  wordForm.reset();
-}
-
 function handleFormSubmit(event) {
   event.preventDefault();
   const word = wordInput.value.trim();
@@ -312,6 +224,7 @@ function handleFormSubmit(event) {
 
   const words = getCurrentWords();
   const existingIndex = words.findIndex((item) => item.word.toLowerCase() === word.toLowerCase());
+  
   const entry = {
     word,
     translation: translationInput.value.trim(),
@@ -327,9 +240,44 @@ function handleFormSubmit(event) {
   }
 
   saveWords(words);
+  
+  // 非同步發送資料到 Google Apps Script（不阻塞本地儲存）
+  sendToGoogleSheet(entry);
+
   renderWordList();
   refreshFlashcard();
+  wordForm.reset();
   wordInput.focus();
+}
+
+async function sendToGoogleSheet(entry) {
+  try {
+    if (GOOGLE_APPS_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+      console.warn('未設定 Google Apps Script URL，資料只保存在本地');
+      return;
+    }
+
+    const payload = {
+      word: entry.word,
+      translation: entry.translation,
+      partOfSpeech: entry.partOfSpeech,
+      example: entry.example,
+      rootAnalysis: entry.rootAnalysis,
+    };
+
+    const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      console.error('Google Sheet 寫入失敗:', response.statusText);
+    } else {
+      console.log('單字已成功保存到 Google Sheet');
+    }
+  } catch (error) {
+    console.error('發送到 Google Sheet 時出錯:', error);
+  }
 }
 
 function selectNextWord() {
@@ -353,6 +301,15 @@ function shuffleWords() {
   refreshFlashcard();
 }
 
+// ============================================
+// 初始化事件監聽器
+// ============================================
+viewFlashcards.addEventListener('click', () => changeView(true));
+viewManage.addEventListener('click', () => changeView(false));
+wordForm.addEventListener('submit', handleFormSubmit);
+prevWordBtn.addEventListener('click', selectPreviousWord);
+nextWordBtn.addEventListener('click', selectNextWord);
+shuffleWordsBtn.addEventListener('click', shuffleWords);
 flashcard.addEventListener('click', () => {
   isFlipped = !isFlipped;
   const cardFront = document.getElementById('cardFront');
@@ -367,14 +324,6 @@ flashcard.addEventListener('click', () => {
   }
 });
 
-viewFlashcards.addEventListener('click', () => changeView(true));
-viewManage.addEventListener('click', () => changeView(false));
-wordForm.addEventListener('submit', handleFormSubmit);
-autoFillButton.addEventListener('click', autoFillWord);
-clearFormButton.addEventListener('click', clearForm);
-prevWordBtn.addEventListener('click', selectPreviousWord);
-nextWordBtn.addEventListener('click', selectNextWord);
-shuffleWordsBtn.addEventListener('click', shuffleWords);
-
+// 初始化頁面
 renderWordList();
 refreshFlashcard();
